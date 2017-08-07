@@ -19,6 +19,8 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -36,6 +38,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.core.client.JavaScriptObject;
 
@@ -66,7 +69,7 @@ class ImportScreen extends HorizontalPanel {
 
 
   ImportScreen() {
-    setStyleName("import-panel");
+    setStyleName("autom-panel");
     display();
   }
 
@@ -136,32 +139,61 @@ class ImportScreen extends HorizontalPanel {
 			remove(gitProjs);
 		}
 		gitProjs = new FlexTable();
-		gitProjs.setText(0, 0, "SDP门户代码库名称");
-		gitProjs.setText(0, 1, "操作");
+		gitProjs.setText(0, 0, "No.");
+		gitProjs.setText(0, 1, "Git Repository Address");
+		gitProjs.setText(0, 2, "Operation");
+		// 获取数据
 		new RestApi("projects").id("All-Projects").view("import-project")
 		    .get(new AsyncCallback<JsArray<ProjectInfo>>() {
 
 		      @Override
 		      public void onSuccess(JsArray<ProjectInfo> result) {
-			ProjectInfo info = null; 
-			for (int j = 0; j < result.length(); j++) {
-			  info = result.get(j);
-			  String repoName = info.appName();
- 			  gitProjs.setText(j + 1, 0, info.appName());
-			  gitProjs.setWidget(j + 1, 1, createMigrateButton(repoName));
+			if (result != null && result.length() > 0) {
+				ProjectInfo info = null; 
+				for (int row = 0; row < result.length(); row++) {
+					info = result.get(row);
+					String repoName = info.appName();
+					gitProjs.setText(row + 1, 0, Integer.toString(row));
+					gitProjs.setText(row + 1, 1, repoName);
+					gitProjs.setWidget(row + 1, 2, createMigrateButton(repoName));
+				}
+			} else {
+				gitProjs.setText(1, 0, "No data was found.");
+				gitProjs.getFlexCellFormatter().setColSpan(1, 0, 3);
 			}
 		      }
 
 		      @Override
 		      public void onFailure(Throwable caught) {
-			Window.alert("2");
+			Window.alert("RPC调用出现异常");
 		      }
 		    });
 
-		gitProjs.setBorderWidth(1);
+
+		gitProjs.setBorderWidth(0);
+		gitProjs.setCellSpacing(0);
+		/* 追加选中行时的样式 */
+		gitProjs.addClickHandler(new ClickHandler(){
+			@Override
+			public void onClick(ClickEvent e) {
+				Cell c = gitProjs.getCellForEvent(e);
+				if(c != null) {
+					/* 清除画面已有的选中行*/
+					Element selRepo = Document.get().getElementById("autom-repo-selected");
+					if(selRepo != null) {
+						selRepo.removeAttribute("id");
+					}
+					/* 选中当前行 */
+					c.getElement().getParentElement().setId("autom-repo-selected");
+				}
+			}
+			
+		});
 		add(gitProjs);
 
 	}
+
+
 
 	/**
 	 * 创建迁移[:migrate]按钮
@@ -173,7 +205,7 @@ class ImportScreen extends HorizontalPanel {
 			@Override
 			public void onClick(final ClickEvent event) {
 				// 阻断画面
-				UIBlocker.block(ImportScreen.this);
+				UIBlocker.block(ImportScreen.this, "正在开通 "+repoName+"，请不要关闭窗口....");
 				startImport(repoName);
 
 			}

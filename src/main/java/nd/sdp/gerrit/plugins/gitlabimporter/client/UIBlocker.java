@@ -1,7 +1,5 @@
 package nd.sdp.gerrit.plugins.gitlabimporter.client;
 
-import java.lang.reflect.Method;
-
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Panel;
@@ -23,6 +21,15 @@ public class UIBlocker {
 	 * @param p 要阻断的目标panel
 	 * */
 	public static  void block(Panel p){
+		block(p, null);
+	}
+	
+	/**
+	 * @param p 要阻断的目标panel
+	 * @param msg 阻断画面的提示信息
+	 * */
+	public static  void block(Panel p, String msg){
+		blocker.setInnerText(msg);
 		p.getElement().appendChild(blocker);
 	}
 

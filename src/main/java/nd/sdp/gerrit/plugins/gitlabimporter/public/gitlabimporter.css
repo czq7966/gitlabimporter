@@ -14,18 +14,65 @@
 	56.5% {top:calc(49% + 20px); left:calc(49% + 15px);}
 	62.5% {top:calc(49% + 20px); left:calc(49% + 10px);}
 	68.5% {top:calc(49% + 20px); left:calc(49% + 5px);}
-	75% {top:calc(49% + 20px); left:49%}
+	75% {top:calc(49% + 20px); left:49%;}
 	81.5% {top:calc(49% + 15px); left:49%;}
 	87.5% {top:calc(49% + 10px); left:49%;}
 	93.5% {top:calc(49% + 5px); left:49%;}
-	100% {top:49% left:49%;}
+	100% {top:49%; left:49%;}
 } 
 
 .autom-panel{
-	
+	width: 100%;
 }
+
+/* table 样式 */
+.autom-panel table {
+	border-collapse: collapse;
+	width: 100%;
+}
+.autom-panel table tr td{
+	border: #EEE 1px solid;
+	text-align: center;
+	padding: 1px 6px;
+}
+.autom-panel table tr:hover,
+.autom-panel table tr#autom-repo-selected {
+	background: #D8EDF9;
+}
+
+.autom-panel table tr td:first-child {
+    text-align: right;
+}
+.autom-panel table tr td:nth-child(2) {
+    text-align: left;
+}
+
+/* 标题行样式 */
+.autom-panel table tr:first-child td {
+    font-style: italic;
+    background: #EEE;
+    text-align: center;
+    white-space: nowrap;
+    border: #FFF 1px solid;
+    border-top-color: #EEE;
+}
+.autom-panel table tr:first-child td:first-child {
+    border-left-color: #EEE;
+}
+.autom-panel table tr:first-child td:last-child {
+    border-right-color: #EEE;
+}
+
 .autom-button{
-	
+    border-radius: 2px;
+    background: rgb(83, 169, 63);
+    font-size: 8pt;
+    font-weight: bold;
+    color: #FFF;
+    height: 14px;
+    box-sizing: content-box;
+    text-align: center;
+    padding: 2px 6px;
 }
 
 /* 遮罩层  */
@@ -38,6 +85,10 @@
 	background-color: #000;
 	opacity: 0.5;
 	z-index: 777;
+	text-align: center;
+	font-size: 2em;
+	line-height: 46em;
+	color: silver;
 }
 
 .autom-ui-blocker:before {
